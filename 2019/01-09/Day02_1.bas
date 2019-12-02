@@ -11,7 +11,6 @@ Open Exepath + "\input02.txt" For Input As #1
 Close #1
 Dim nUpperBound As Const Integer = nProgramCounter
 nProgramCounter = 0
-Print nUpperBound
 
 '**ONLY REAL INPUT** before running the program, replace position 1 with the value 12 and replace position 2 with the value 2.
 aProgramIntCode(1) = 12 : aProgramIntCode(2) = 2
