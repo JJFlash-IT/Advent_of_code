@@ -17,8 +17,8 @@ For nThisPassword = 245318 To 765747
 			Exit For
 		Endif
 	Next nPasswordPosition
-	If nPasswordPosition = 6 And bAdjacentNumber Then
-		nValidPasswordsCount += 1 'If the inner loop exits early, the password is not a valid one
+	If nPasswordPosition = 6 And bAdjacentNumber Then 'If the inner loop exits early, the password is not a valid one
+		nValidPasswordsCount += 1 
 		Print nThisPassword
 	Endif
 Next nThisPassword
