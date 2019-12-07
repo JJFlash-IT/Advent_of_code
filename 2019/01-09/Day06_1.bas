@@ -5,7 +5,6 @@ Dim As String sInputString
 Dim As Integer nLeftHash, nRightHash
 
 Type strNodes
-	OrbitTotal As Integer
 	aChildNodes(Any) As Integer
 End Type
 
