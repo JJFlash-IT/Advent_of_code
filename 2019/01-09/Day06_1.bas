@@ -1,3 +1,8 @@
+'Print Asc("A") -- 65
+'Print Asc("C") & Asc("O") & Asc("M") -- 677977
+'Print Asc("1") & Asc("1") & Asc("6") -- 494954
+'Print Asc("Z") & Asc("Z") & Asc("9") -- 909057
+
 #Include "crt.bi"
 
 Dim Shared nCheckSum As Integer
@@ -33,20 +38,13 @@ Open Exepath + "\input06.txt" For Input As #1
 Close #1
 
 Sub NavigateTree(nNodeIndex As Integer, nDepth As Integer = 0)
-'	Print Space(nDepth) & "Entering node " & nNodeIndex ; : If nNodeIndex < 100 Then Print " (" & Chr(nNodeIndex) & ")" ;
-'	Print
 	nCheckSum += nDepth
-'	Print Space(nDepth) & "- CHECKSUM: " & nCheckSum
 	Dim nNextNodeIndex As Integer
 	With aNodes(nNodeIndex)
 		For nNextNodeIndex = 0 To Ubound(.aChildNodes)
-'			Print Space(nDepth) & "* [" & nNodeIndex & "] Going into node " & .aChildNodes(nNextNodeIndex) ; : If nNextNodeIndex < 100 Then Print " (" & Chr(.aChildNodes(nNextNodeIndex)) & ")" ;
-'			Print
 			NavigateTree(.aChildNodes(nNextNodeIndex), nDepth + 1)
 		Next nNextNodeIndex
 	End With
-'	Print Space(nDepth) & "EXITING NODE " & nNodeIndex ; : If nNodeIndex < 100 Then Print " (" & Chr(nNodeIndex) & ")" ;
-'	Print
 End Sub
 
 NavigateTree(BrutalHash("COM"))
