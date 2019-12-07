@@ -1,8 +1,3 @@
-'Print Asc("A") -- 65
-'Print Asc("C") & Asc("O") & Asc("M") -- 677977
-'Print Asc("1") & Asc("1") & Asc("6") -- 494954
-'Print Asc("Z") & Asc("Z") & Asc("9") -- 909057
-
 #Include "crt.bi"
 
 Dim Shared nCheckSum As Integer
