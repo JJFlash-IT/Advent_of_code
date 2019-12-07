@@ -9,7 +9,7 @@ Type strNodes
 End Type
 
 'This is **EXTREMELY** wasteful but should be EXTREMELY fast...
-Dim Shared aNodes(65 To 677977) As strNodes
+Dim Shared aNodes(494954 To 909057) As strNodes
 Dim Shared As Integer nStartingIndex, nEndingIndex
 
 Function BrutalHash(sInput As String) As Integer
@@ -20,7 +20,7 @@ Function BrutalHash(sInput As String) As Integer
 	BrutalHash = Valint(sTempHash)
 End Function
 
-Open Exepath + "\input06_testPart2.txt" For Input As #1
+Open Exepath + "\input06.txt" For Input As #1
 	Do
 		Input #1, sInputString
 		nLeftHash = BrutalHash(*Strtok(sInputString, ")"))
@@ -50,23 +50,15 @@ Sub NavigateTree(nNodeIndex As Integer, nDepth As Integer = 0)
 	Dim nNextNodeIndex As Integer
 	
 	aNodes(nNodeIndex).Steps = nDepth
-	Print Space(nDepth) & "Entering node " & nNodeIndex ; : If nNodeIndex < 100 Then Print " (" & Chr(nNodeIndex) & ")" ;
-	Print
 
-	If nNodeIndex = nEndingIndex Then
-		Print Space(nDepth) & "*** SANTA FOUND! *** in " & nDepth & " steps!"
-	Else
+	If nNodeIndex <> nEndingIndex Then
 		With aNodes(nNodeIndex)
 			For nNextNodeIndex = 0 To Ubound(.aNodesToVisit)
 				If nDepth >= aNodes(.aNodesToVisit(nNextNodeIndex)).Steps Then Continue For 'Already visited with a shorter/equal depth, don't go again!
-				Print Space(nDepth) & "* [" & nNodeIndex & "] Going into node " & .aNodesToVisit(nNextNodeIndex) ; : If .aNodesToVisit(nNextNodeIndex) < 100 Then Print " (" & Chr(.aNodesToVisit(nNextNodeIndex)) & ")" ;
-				Print
 				NavigateTree(.aNodesToVisit(nNextNodeIndex), nDepth + 1)
 			Next nNextNodeIndex
 		End With
 	Endif
-	Print Space(nDepth) & "EXITING NODE " & nNodeIndex ; : If nNodeIndex < 100 Then Print " (" & Chr(nNodeIndex) & ")" ;
-	Print
 End Sub
 
 NavigateTree(nStartingIndex)
