@@ -1,6 +1,3 @@
-'Print Asc("A") -- 65
-'Print Asc("Y") & Asc("O") & Asc("U") ' -- 897985
-
 #Include "crt.bi"
 
 Dim As String sInputString, sRightString
