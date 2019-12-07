@@ -102,7 +102,6 @@ Function RunProgram(nPhaseSetting As Integer, nAmplifierInput As Integer) As Int
 						End If
 				End Select
 			Case 99 'HALT! (and DON'T catch fire!)
-'				Print "Program halted at location: " & nProgramCounter & " [" & nPhaseSetting & "]"
 				Exit Do
 			Case Else
 				Print "?ILLEGAL OPCODE  ERROR" : Print "nProgramCounter: " & nProgramCounter & " - Opcode: " & aProgramIntCode(nProgramCounter) & "[" & nOpcode & "]"
