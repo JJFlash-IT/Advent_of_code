@@ -149,9 +149,7 @@ Loop
 Open Exepath + "\output11.txt" For Output As #2
 	For nPanelRow As Integer = -60 To 60
 		For nPanelCol As Integer = -60 To 60
-			With aPanelMap(nPanelRow, nPanelCol)
-				Print #2, Iif(aPanelMap(nPanelRow, nPanelCol).PaintColor, "#", ".") ;
-			End With
+			Print #2, Iif(aPanelMap(nPanelRow, nPanelCol).PaintColor, "#", ".") ;
 		Next nPanelCol
 		Print #2, ""
 	Next nPanelRow
