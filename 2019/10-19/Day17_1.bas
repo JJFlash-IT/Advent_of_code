@@ -1,6 +1,6 @@
 #Include "crt.bi"
 
-Dim Shared As Longint aProgramIntCode(Any), nTempVar, nRelativeBase 'The computer should have support for large numbers... The relative base starts at 0
+Dim Shared As Longint aProgramIntCode(Any), nTempVar 'The computer should have support for large numbers...
 Dim Shared As Integer nProgramCounter
 Dim Shared bHalted As Boolean
 
@@ -22,6 +22,7 @@ Dim Shared nUpperBound As Integer : nUpperBound = nProgramCounter
 nProgramCounter = 0
 
 Sub RunProgram(Byref nInput As Longint, Byref nOutput As Longint)
+	Static As Longint nRelativeBase 'The computer should have support for large numbers... The relative base starts at 0
 	Static As Integer nInstructionInt, nOpcode, nParameterCount
 	Static aParameters(1 To 3) As strOperands 'Max number of parameters: THREE
 	Static aArgCount(1 To 9) As Const Integer => {3, 3, 1, 1, 2, 2, 3, 3, 1}
