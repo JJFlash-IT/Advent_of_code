@@ -128,7 +128,7 @@ Dim As strRobot tRobot, tRobotTemp
 
 Dim As String sInputString, sOneLine
 Dim nChar As Longint
-Dim As Integer nRow, nCol, nTurnDirection', nReturnCode
+Dim As Integer nRow, nCol, nTurnDirection
 'Force the robot to wake up by changing the value at address 0 from 1 to 2.
 aProgramIntCode(0) = 2
 Do
@@ -158,8 +158,8 @@ Do
 	'Where should the robot turn?
 	For nTurnDirection= -1 To 1 Step 2 'First on its left, then on its right
 		tRobotTemp = tRobot 'Copy the position & direction of the real robot...
-		tRobotTemp.Row += aDirections((tRobot.Direction + nTurnDirection) And 3).IncrRow
-		tRobotTemp.Col += aDirections((tRobot.Direction + nTurnDirection) And 3).IncrCol
+		tRobotTemp.Row += aDirections((tRobotTemp.Direction + nTurnDirection) And 3).IncrRow
+		tRobotTemp.Col += aDirections((tRobotTemp.Direction + nTurnDirection) And 3).IncrCol
 		If aScaffoldMap(tRobotTemp.Row, tRobotTemp.Col) = SCAFFOLD Then Exit For 'Found a scaffold sector in this direction!
 	Next nTurnDirection
 	If nTurnDirection = 3 Then Exit Do 'No way to turn, the path has ended!
