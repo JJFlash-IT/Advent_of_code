@@ -8,7 +8,7 @@
 
 'REAL
 Const sInputFilename As String = "input12.txt"
-Const nStepIterations As Integer = 1000 : Const nStepInterval As Integer = 100
+Const nStepIterations As Integer = 1000 : Const nStepInterval As Integer = 1000
 
 Type str3D
 	As Integer X, Y, Z
