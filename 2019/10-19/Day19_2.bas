@@ -1,3 +1,6 @@
+'Hint from Reddit:
+'https://www.reddit.com/r/adventofcode/comments/ecogl3/2019_day_19_solutions/fbfjeyv/
+
 Dim Shared As Longint aProgramIntCode(Any), nTempVar 'The computer should have support for large numbers...
 Dim Shared As Integer nProgramCounter
 
@@ -17,9 +20,9 @@ Open Exepath + "\input19.txt" For Input As #1
 	Loop
 Close #1
 Dim Shared nUpperBound As Integer : nUpperBound = nProgramCounter
-Redim Preserve aProgramIntCode(nUpperBound)
 
 Sub ResetProgram()
+	Redim aProgramIntCode(nUpperBound) 'Reset the whole memory!
 	For K As Integer = 0 To nUpperBound
 		aProgramIntCode(K) = aOriginalProgram(K)
 	Next K
@@ -28,7 +31,7 @@ End Sub
 
 ResetProgram()
 
-Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
+Function RunProgram(Byval nInput As Longint, Byref nOutput As Longint) As Integer
 	Static As Longint nRelativeBase 'The computer should have support for large numbers... The relative base starts at 0
 	Static As Integer nInstructionInt, nOpcode, nParameterCount
 	Static aParameters(1 To 3) As strOperands 'Max number of parameters: THREE
@@ -36,9 +39,6 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 	'                                             1, 2, 3, 4, 5, 6, 7, 8, 9 
 	Static aWritingParam(1 To 9) As Const Integer => {3, 3, 1, 0, 0, 0, 3, 3, 0}
 	'                                                 1, 2, 3, 4, 5, 6, 7, 8, 9
-	Static sInputBuffer As String
-	
-	sInputBuffer &= sInput
 	
 	Do
 		If nProgramCounter > nUpperBound Then Print "?OUT OF PROGRAM  ERROR" : Print "nProgramCounter: " & nProgramCounter : System
@@ -81,17 +81,11 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 				'Opcode 2 multiplies the two inputs instead of adding them
 				aProgramIntCode(aParameters(3).Value) = aParameters(1).Value * aParameters(2).Value
 			Case 3 'Input - takes a single integer as input and saves it to the position given by its only parameter
-				If sInputBuffer = "" Then
-					nProgramCounter -= 2 'Go back to the Input instruction, so it can be tried again later
-					Exit Do 'The VM "pauses", awaiting input
-				Else
-					aProgramIntCode(aParameters(1).Value) = Clngint(sInputBuffer[0])
-'					If (sInputBuffer[0] >= Asc(" ") And sInputBuffer[0] <= Asc("z")) Or sInputBuffer[0] = 10 Then Print Chr(sInputBuffer[0]);
-					sInputBuffer = Mid(sInputBuffer, 2) 'Eat the character just read
-				Endif
+				aProgramIntCode(aParameters(1).Value) = nInput
+				Exit Do 'The VM "pauses", awaiting input
 			Case 4 'Output - outputs the value of its only parameter.
 				nOutput = aParameters(1).Value
-				If (nOutput >= Asc(" ") And nOutput <= Asc ("z")) Or nOutput = 10 Then Print Chr(nOutput);
+'				If (nOutput >= Asc(" ") And nOutput <= Asc ("z")) Or nOutput = 10 Then Print Chr(nOutput);
 				Exit Do 'The VM "pauses" after outputting stuff
 			Case 5 'jump-if-true - if the first parameter is *non-zero*, it sets the instruction pointer to the value from the second parameter.
 				If aParameters(1).Value Then
@@ -121,20 +115,34 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 	Function = nOpcode
 End Function
 
-Dim nTractBeamSectors As Integer
-
-'Negative numbers are invalid and will confuse the drone - this is good since I'm using a string as input!
-'For each of X and Y, this will be 0 through 49.
-For nGridY As Integer = 0 To 49
-	For nGridX As Integer = 0 To 49
-		'The program uses two input instructions to request the X and Y position
-		RunProgram(Chr(nGridX) & Chr(nGridY), nTempVar)
-		RunProgram("", nTempVar) 'This is for the program to exit gracefully	
-		Print Iif(nTempVar, "#", ".");
-		nTractBeamSectors += nTempVar
+Dim As Integer nGridY = 1000, nGridX = 590, nGridY_Corner, nGridX_Corner
+Do
+	'The program uses two input instructions to request the X and Y position
+	RunProgram(Clngint(nGridX), nTempVar)
+	RunProgram(Clngint(nGridY), nTempVar)
+	RunProgram(0, nTempVar) 'This to get the output value
+	RunProgram(0, nTempVar) 'This is for the program to exit gracefully	
+	ResetProgram()
+	If nTempVar = 0 Then
+		nGridX += 1 'Try the next column...
+	Else
+		'Is there another tractor-beam point 99 rows up and 99 columns right (the right-upper corner) ?
+		nGridY_Corner = nGridY - 99 : nGridX_Corner = nGridX + 99
+		RunProgram(Clngint(nGridX_Corner), nTempVar)
+		RunProgram(Clngint(nGridY_Corner), nTempVar)
+		RunProgram(0, nTempVar) 'This to get the output value
+		RunProgram(0, nTempVar) 'This is for the program to exit gracefully	
 		ResetProgram()
-	Next nGridX
-	Print
-Next nGridY
-
-Print : Print "Tractor beam sectors: " & nTractBeamSectors
+		If nTempVar Then 'EUREKA! We have the 100x100 square inside the tractor beam!
+			Exit Do
+		Else 'Try next row...
+			nGridY += 1
+		EndIf
+	Endif
+Loop
+Print "Final Coordinates:"
+Print "Y = " & nGridY_Corner
+Print "X = " & nGridX
+Print
+'take that point's X coordinate, multiply it by 10000, then add the point's Y coordinate
+Print "Answer:"; : Color 15: Print (nGridX * 10000) + nGridY_Corner : Color 7
