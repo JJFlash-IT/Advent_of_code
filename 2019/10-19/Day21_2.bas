@@ -37,7 +37,6 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 		nOpcode = nInstructionInt Mod 100 'Gets tens and ones digits, the Opcode!
 		
 		If nOpcode = 99 Then 'HALT! (and DON'T catch fire!)
-'			nRelativeBase = 0 'This must be reset on each run of the program!
 			Exit Do
 		Endif
 
