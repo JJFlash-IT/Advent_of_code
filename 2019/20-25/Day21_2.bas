@@ -6,7 +6,7 @@ Type strOperands
 	Mode As Integer
 End Type
 
-Open Exepath + "\input25.txt" For Input As #1
+Open Exepath + "\input21.txt" For Input As #1
 	Do
 		Input #1, nTempVar
 		Redim Preserve aProgramIntCode(nProgramCounter)
@@ -17,8 +17,6 @@ Open Exepath + "\input25.txt" For Input As #1
 Close #1
 Dim Shared nUpperBound As Integer : nUpperBound = nProgramCounter
 nProgramCounter = 0
-
-Dim Shared bDebug As Boolean
 
 Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 	Static nRelativeBase As Longint 'The computer should have support for large numbers... The relative base starts at 0
@@ -39,6 +37,7 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 		nOpcode = nInstructionInt Mod 100 'Gets tens and ones digits, the Opcode!
 		
 		If nOpcode = 99 Then 'HALT! (and DON'T catch fire!)
+'			nRelativeBase = 0 'This must be reset on each run of the program!
 			Exit Do
 		Endif
 
@@ -77,11 +76,13 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 					Exit Do 'The VM "pauses", awaiting input
 				Else
 					aProgramIntCode(aParameters(1).Value) = Clngint(sInputBuffer[0])
+					If (sInputBuffer[0] >= Asc(" ") And sInputBuffer[0] <= Asc("z")) Or sInputBuffer[0] = 10 Then Print Chr(sInputBuffer[0]);
 					sInputBuffer = Mid(sInputBuffer, 2) 'Eat the character just read
 				Endif
 			Case 4 'Output - outputs the value of its only parameter.
 				nOutput = aParameters(1).Value
 				If (nOutput >= Asc(" ") And nOutput <= Asc ("z")) Or nOutput = 10 Then Print Chr(nOutput);
+				Exit Do 'The VM "pauses" after outputting stuff
 			Case 5 'jump-if-true - if the first parameter is *non-zero*, it sets the instruction pointer to the value from the second parameter.
 				If aParameters(1).Value Then
 					nProgramCounter = aParameters(2).Value
@@ -110,26 +111,23 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 	Function = nOpcode
 End Function
 
-'This will be automated... SOMEDAY
-'Map is not that big, can be navigated manually
-'These are the objects that must be taken:
-'- whirled peas
-'- fixed point
-'- prime number
-'- antenna
+'There are only three instructions available in springscript:
 
-'Powerful hint from Reddit:
-'https://www.reddit.com/r/adventofcode/comments/efca4m/2019_day_25_solutions/fc05w93/
+'    AND X Y sets Y to true if both X and Y are true; otherwise, it sets Y to false.
+'    OR X Y sets Y to true if at least one of X or Y is true; otherwise, it sets Y to false.
+'    NOT X Y sets Y to true if X is false; otherwise, it sets Y to false.
 
-Dim nResult As Integer
-Dim sCommand As String
+'Stole the instructions :'-(( here:
+'https://www.reddit.com/r/adventofcode/comments/edll5a/2019_day_21_solutions/fbip180/ 
+Dim As String sInstructions, sTemp
+Open Exepath & "\instructions21_2.txt" For Input As #1
+	Do
+		Line Input #1, sTemp
+		sInstructions &= sTemp & Chr(10)
+	Loop Until Eof(1)
+Close #1
 
-Do 
-	nResult = RunProgram(sCommand, 0)
-	If nResult = 3 Then
-		Input "", sCommand
-		sCommand &= Chr(10)
-	Elseif nResult = 99 Then Exit Do
-	Else sCommand = ""
-	Endif
-Loop
+RunProgram(sInstructions, nTempVar)
+Do
+Loop Until RunProgram("", nTempVar) = 99
+If nTempVar > Asc("z") Then Print "---" : Print nTempVar
