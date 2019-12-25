@@ -37,7 +37,6 @@ Function RunProgram(Byref sInput As String, Byref nOutput As Longint) As Integer
 		nOpcode = nInstructionInt Mod 100 'Gets tens and ones digits, the Opcode!
 		
 		If nOpcode = 99 Then 'HALT! (and DON'T catch fire!)
-'			nRelativeBase = 0 'This must be reset on each run of the program!
 			Exit Do
 		Endif
 
@@ -119,6 +118,7 @@ End Function
 
 'Stole the instructions :'-(( here:
 'https://www.reddit.com/r/adventofcode/comments/edll5a/2019_day_21_solutions/fbip180/ 
+
 Dim As String sInstructions, sTemp
 Open Exepath & "\instructions21_2.txt" For Input As #1
 	Do
