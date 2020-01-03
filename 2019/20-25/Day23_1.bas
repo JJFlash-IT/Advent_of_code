@@ -21,7 +21,7 @@ Scope
 	nUpperBound = nInstructionPointer
 End Scope
 
-Const nQueueMaxIndex As Integer = 31
+Const nQueueMaxIndex As Integer = 15
 
 Type strNICcard
 	Address As Longint = &H8000000000000000
@@ -169,7 +169,7 @@ Do
 					aComputer(.Address).AddToInputBuffer(.Y)
 					.Address = &H8000000000000000
 					.X = &H8000000000000000
-					.Y = &H8000000000000000 
+					'No need to reset .Y ...
 				Endif
 			Endif
 		End With
