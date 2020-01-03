@@ -76,6 +76,8 @@ Function strComputer.RunProgram(Byref nOutput As Longint) As Integer
 	Erase aParameters : nParameterCount = 0
 	nInstructionInt = aProgramIntCode(nProgramCounter)
 	nOpcode = nInstructionInt Mod 100 'Gets tens and ones digits, the Opcode!
+	
+	If nOpcode = 99 Then Return 99 'HALT! (and DON'T catch fire!)
 
 	nInstructionInt \= 100 '"Right shift" the number twice
 	While nInstructionInt 'Are there any parameter mode inside this integer?
@@ -130,7 +132,6 @@ Function strComputer.RunProgram(Byref nOutput As Longint) As Integer
 			'adjusts the relative base by the value of its only parameter.
 			'The relative base increases (or decreases, if the value is negative) by the value of the parameter.
 			nRelativeBase += aParameters(1).Value
-		Case 99 'HALT! (and DON'T catch fire!)
 		Case Else
 			Print "?ILLEGAL OPCODE  ERROR" : Print "nProgramCounter: " & nProgramCounter & " - Opcode: " & aProgramIntCode(nProgramCounter) & "[" & nOpcode & "]"
 			System
@@ -150,6 +151,7 @@ For nThisComputer = 0 To 49
 Next nThisComputer
 nThisComputer = 0
 
+'The 50 computers will run "pseudo-parallelly", one instruction at a time...
 Do
 	nOpcodeReturned = aComputer(nThisComputer).RunProgram(nOutputValue)
 	If nOpcodeReturned = 4 Then 'If RunProgram exited on a OUTPUT opcode...
@@ -167,6 +169,7 @@ Do
 				Else
 					aComputer(.Address).AddToInputBuffer(.X)
 					aComputer(.Address).AddToInputBuffer(.Y)
+					'The "queue holder" can now be reset
 					.Address = &H8000000000000000
 					.X = &H8000000000000000
 					'No need to reset .Y ...
