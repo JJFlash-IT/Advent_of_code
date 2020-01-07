@@ -14,7 +14,6 @@ Sub Reverse(nFirstIndex As Integer, nSecondIndex As Integer)
 End Sub
 
 Sub Rotate(nRotations As Integer)
-'	nRotations Mod= nCardsNumber
 	If nRotations < 0 Then nRotations = nCardsNumber - Abs(nRotations) '"Simulates" right rotation by finding complementary number of left rotations
 
 	Reverse(0, nRotations - 1)
