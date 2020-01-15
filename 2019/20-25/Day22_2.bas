@@ -4,19 +4,20 @@
 
 Type strOperations
 	Operation As String
-	Number As Integer
+	Number As Longint
 End Type
 
 Dim Shared aOperations(Any) As strOperations
-Dim nOperationNumber As Integer = -1
+Dim Shared nOperationNumber As Integer = -1
 
 Function RealMod(nNumber1 As Longint, nNumber2 As Longint) As Longint
 	'As explained in: https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
-	RealMod = nNumber1 Mod nNumber2
-	If RealMod < 0 Then RealMod += nNumber2
+	Dim nResult As Longint = nNumber1 Mod nNumber2
+	If nResult < 0 Then nResult += nNumber2
+	RealMod = nResult
 End Function
 
-Sub Combine(Byref a As Longint, Byref b As Longint, nDeckSize As Const Ulongint)
+Sub Combine(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint)
     ' dealintonewstack (-1 - x) mod m
     ' cut (x - n) mod m
     ' dealwithincrement (x * n) mod m
@@ -48,11 +49,11 @@ Sub Combine(Byref a As Longint, Byref b As Longint, nDeckSize As Const Ulongint)
 End Sub
 
 'Find the logarithm of any base - copied STRAIGHT from the Freebasic documentation
-Function LogBaseX (ByVal Number As Double, ByVal BaseX As Double) As Double
+Function LogBaseX (ByVal Number As Longint, ByVal BaseX As Longint) As Double
     LogBaseX = Log( Number ) / Log( BaseX )
 End Function
 
-Sub Repeat(Byref a As Longint, Byref b As Longint, nDeckSize As Const Ulongint, nRepetitions As Const Ulongint)
+Sub Repeat(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint, nRepetitions As Const Longint)
     ' we need to repeat n times
     '
     ' to repeat 2 times: a2, b2 = (a**2) % m, (b * (a + 1)) % m
@@ -94,27 +95,40 @@ Sub Repeat(Byref a As Longint, Byref b As Longint, nDeckSize As Const Ulongint, 
 	a = a1 : b = b1
 End Sub
 
-Function Inverse(a As Longint, b As Ulongint) As Longint
-/'
-def inverse(a, b):
-    m = b
-    prevx, x = 1, 0
-    prevy, y = 0, 1
-    while b:
-        q = a // b
-        x, prevx = prevx - q * x, x
-        y, prevy = prevy - q * y, y
-        a, b = b, a % b
-    return prevx % m
-'/
-	Dim nDeckSize As Ulongint = b
+Function Inverse(a As Longint, b As Longint) As Longint
+'Original Python:
+'	def inverse(a, b):
+'		m = b
+'		prevx, x = 1, 0
+'		prevy, y = 0, 1
+'		while b:
+'			q = a // b
+'			x, prevx = prevx - q * x, x            [ x = prevx - q * x     prevx = x ]   
+'			y, prevy = prevy - q * y, y            [ y = prevy - q * y     prevy = y ]
+'			a, b = b, a % b                        [ a = b                 b = a % b ]
+'		return prevx % m
+
+	Dim nDeckSize As Longint = b
 	Dim As Longint nPrevX = 1, x = 0
 	Dim As Longint nPrevY = 0, y = 1
 	Dim q As Longint
+	Dim As Longint nPythonExpr1, nPythonExpr2
 	Do While b
 		q = a \ b
-		nPrevX = x : x = nPrevX - q * x
-		nPrevY = y : y = nPrevY - q * y
+
+		'in Python, the expressions on the right-hand side are all evaluated first before any of the assignments take place
+		'https://stackoverflow.com/a/11502290
+		nPythonExpr1 = nPrevX - q * x
+		nPythonExpr2 = x
+		x = nPythonExpr1 : nPrevX = nPythonExpr2
+		
+		nPythonExpr1 = nPrevY - q * y
+		nPythonExpr2 = y
+		y = nPythonExpr1 : nPrevY = nPythonExpr2
+		
+		nPythonExpr1 = b
+		nPythonExpr2 = RealMod(a, b)
+		a = nPythonExpr1 : b = nPythonExpr2
 	Loop
 	Inverse = RealMod(nPrevX, nDeckSize)
 End Function
@@ -132,11 +146,20 @@ Open Exepath + "\input22.txt" For Input As #1
 					'.Number stays at zero
 				Case "deal w" 'Deal with increment
 					.Operation = "increment"
-					.Number = Valint(Mid(nTempString, Len("deal with increment ")))
+					.Number = Vallng(Mid(nTempString, Len("deal with increment ")))
 				Case Else     'Cut (rotate)
 					.Operation = "rotate"
-					.Number = Valint(Mid(nTempString, Len("cut ")))
+					.Number = Vallng(Mid(nTempString, Len("cut ")))
 			End Select
 		End With
 	Loop Until Eof(1)
 Close #1
+
+Dim As Longint nDeckSize, nCardPosition, nShuffles
+Dim As Longint a, b, i
+'TEST using Part 1 solution... my answer: 2514
+nDeckSize = 10007 : nCardPosition = 2514 : nShuffles = 1
+Combine(a, b, nDeckSize)
+Repeat(a, b, nDeckSize, nShuffles)
+i = Inverse(a, nDeckSize)
+Print "This *must* be equal to 2019: " & RealMod((nCardPosition - b) * i, nDeckSize)
