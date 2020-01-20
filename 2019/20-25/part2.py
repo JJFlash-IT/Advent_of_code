@@ -47,6 +47,7 @@ def combine(decklen, operations):
             b = b * n
         else:
             raise ValueError("unknown operation", o)
+##        print(a, b)
     return a % decklen, b % decklen
 
 
@@ -65,7 +66,9 @@ def repeat(a, b, m, n):
         logn = math.floor(math.log(n2, 2))
         for _ in range(logn):
             a2, b2 = (a2**2) % m, (b2 * (a2 + 1)) % m
+            print("a2, b2 ", a2, b2)
         a1, b1 = (a1 * a2) % m, (a1 * b2 + b1) % m
+        print("a1, b1 ", a1, b1)
         n2 -= 2**logn
     assert n2 == 0
     return a1, b1
@@ -84,20 +87,26 @@ def inverse(a, b):
 
 
 def main(inputfile):
-    m, x, n = 10007, 6326, 1
+    m, x, n = 10007, 2514, 1
     operations = read(inputfile)
     a, b = combine(m, operations)
+    print("After combine:", a, b)
     a, b = repeat(a, b, m, n)
+    print("After repeat :", a, b)
     i = inverse(a, m)
+    print("Inverse: ", i)
     print(((x - b) * i) % m)
 
     m, x, n = 119315717514047, 2020, 101741582076661
     operations = read(inputfile)
     a, b = combine(m, operations)
+    print("After combine:", a, b)
     a, b = repeat(a, b, m, n)
+    print("After repeat :", a, b)
     i = inverse(a, m)
+    print("Inverse: ", i)    
     print(((x - b) * i) % m)
 
 
 if __name__ == "__main__":
-    main("input")
+    main("input22.txt")

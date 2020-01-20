@@ -34,7 +34,7 @@ Sub Combine(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint)
 				' (-1 - x) = (-1 - (ax + b)) = -ax + (-b - 1)
 				a = -a
 				b = -b - 1
-			Case "cut"
+			Case "rotate"
 				' (x - n) = ((ax + b) - n) = ax + b - n
 				b -= aOperations(nThisOperation).Number
 			Case "increment"
@@ -42,10 +42,12 @@ Sub Combine(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint)
 				a *= aOperations(nThisOperation).Number
 				b *= aOperations(nThisOperation).Number
 		End Select
+		a = RealMod(a, nDeckSize)
+		b = RealMod(b, nDeckSize)
 	Next nThisOperation
 	
-	a = RealMod(a, nDeckSize)
-	b = RealMod(b, nDeckSize)
+'	a = RealMod(a, nDeckSize)
+'	b = RealMod(b, nDeckSize)
 End Sub
 
 'Find the logarithm of any base - copied STRAIGHT from the Freebasic documentation
@@ -85,9 +87,11 @@ Sub Repeat(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint, n
 		For nThisIter As Integer = 1 To nLogn
 			b2 = RealMod(b2 * (a2 + 1), nDeckSize)
 			a2 = RealMod(a2^2, nDeckSize)
+			Print "a2, b2 " ; a2 ; b2
 		Next nThisIter
 		b1 = RealMod(a1 * b2 + b1, nDeckSize)
 		a1 = RealMod(a1 * a2, nDeckSize)
+		Print "a1, b1 " ; a1 ; b1
 		n2 -= 2 ^ nLogn
 	Loop
 	If n2 = 0 Then Print , "n2 is zero!" Else Print , "n2 is NOT zero!"
@@ -160,6 +164,21 @@ Dim As Longint a, b, i
 'TEST using Part 1 solution... my answer: 2514
 nDeckSize = 10007 : nCardPosition = 2514 : nShuffles = 1
 Combine(a, b, nDeckSize)
+Print "After combine: " & a ; b
 Repeat(a, b, nDeckSize, nShuffles)
+Print "After repeat: " & a ; b
 i = Inverse(a, nDeckSize)
+Print "Inverse: " & i
 Print "This *must* be equal to 2019: " & RealMod((nCardPosition - b) * i, nDeckSize)
+Print
+
+'REAL
+nDeckSize = 119315717514047 : nCardPosition = 2020 : nShuffles = 101741582076661
+Combine(a, b, nDeckSize)
+Print "After combine: " & a ; b
+Repeat(a, b, nDeckSize, nShuffles)
+Print "After repeat: " & a ; b
+i = Inverse(a, nDeckSize)
+Print "Inverse: " & i
+Print "And the solution is... " & RealMod((nCardPosition - b) * i, nDeckSize)
+Print
