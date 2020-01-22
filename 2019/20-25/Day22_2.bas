@@ -2,6 +2,7 @@
 'Python application of that: https://github.com/elemoine/adventofcode/blob/master/2019/day22/part2.py
 'This is mainly a translation exercise (without me knowing Python!), I basically copied the solution :(
 
+'Big Integer Library: https://github.com/stephanbrunker/big_integer
 #Include "big_integer.bi"
 
 Type strOperations
