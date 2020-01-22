@@ -65,7 +65,10 @@ def repeat(a, b, m, n):
         a2, b2 = a, b
         logn = math.floor(math.log(n2, 2))
         for _ in range(logn):
-            a2, b2 = (a2**2) % m, (b2 * (a2 + 1)) % m
+##            a2, b2 = (a2**2) % m, (b2 * (a2 + 1)) % m
+            print ("b2 * (a2 + 1): ", b2 * (a2 + 1))
+            b2 = (b2 * (a2 + 1)) % m
+            a2 = (a2**2) % m
             print("a2, b2 ", a2, b2)
         a1, b1 = (a1 * a2) % m, (a1 * b2 + b1) % m
         print("a1, b1 ", a1, b1)

@@ -2,6 +2,8 @@
 'Python application of that: https://github.com/elemoine/adventofcode/blob/master/2019/day22/part2.py
 'This is mainly a translation exercise (without me knowing Python!), I basically copied the solution :(
 
+#Include "big_integer.bi"
+
 Type strOperations
 	Operation As String
 	Number As Longint
@@ -10,9 +12,19 @@ End Type
 Dim Shared aOperations(Any) As strOperations
 Dim Shared nOperationNumber As Integer = -1
 
+Declare Function RealMod Overload(nNumber1 As Longint, nNumber2 As Longint) As Longint
+Declare Function RealMod Overload (nNumber1 As Bigint, nNumber2 As Longint) As Bigint
+
 Function RealMod(nNumber1 As Longint, nNumber2 As Longint) As Longint
 	'As explained in: https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
 	Dim nResult As Longint = nNumber1 Mod nNumber2
+	If nResult < 0 Then nResult += nNumber2
+	RealMod = nResult
+End Function
+
+Function RealMod(nNumber1 As Bigint, nNumber2 As Longint) As Bigint
+	'As explained in: https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
+	Dim nResult As Bigint = nNumber1 Mod nNumber2
 	If nResult < 0 Then nResult += nNumber2
 	RealMod = nResult
 End Function
@@ -64,8 +76,8 @@ Sub Repeat(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint, n
     ' ...
     ' we repeat 2**logn times, 2**logn times what's left, etc.
 	
-	Dim As Longint a1 = 1, b1
-	Dim As Longint a2, b2
+	Dim As Bigint a1 = 1, b1
+	Dim As Bigint a2, b2
 	Dim n2 As Longint = nRepetitions
 	Dim nLogn As Longint
 
@@ -85,6 +97,7 @@ Sub Repeat(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint, n
 		a2 = a : b2 = b
 		nLogn = Int(LogBaseX(n2, 2))
 		For nThisIter As Integer = 1 To nLogn
+			Print "b2 * (a2 + 1): " ; b2 * (a2 + 1)
 			b2 = RealMod(b2 * (a2 + 1), nDeckSize)
 			a2 = RealMod(a2^2, nDeckSize)
 			Print "a2, b2 " ; a2 ; b2
