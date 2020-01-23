@@ -11,21 +11,11 @@ Type strOperations
 End Type
 
 Dim Shared aOperations(Any) As strOperations
-Dim Shared nOperationNumber As Integer = -1
+Dim Shared nOperationNumber As Integer
 
-Declare Function RealMod Overload(nNumber1 As Longint, nNumber2 As Longint) As Longint
-Declare Function RealMod Overload (nNumber1 As Bigint, nNumber2 As Longint) As Bigint
-
-Function RealMod(nNumber1 As Longint, nNumber2 As Longint) As Longint
+Function RealMod(nNumber1 As Bigint, nNumber2 As Longint) As Longint
 	'As explained in: https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
 	Dim nResult As Longint = nNumber1 Mod nNumber2
-	If nResult < 0 Then nResult += nNumber2
-	RealMod = nResult
-End Function
-
-Function RealMod(nNumber1 As Bigint, nNumber2 As Longint) As Bigint
-	'As explained in: https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
-	Dim nResult As Bigint = nNumber1 Mod nNumber2
 	If nResult < 0 Then nResult += nNumber2
 	RealMod = nResult
 End Function
@@ -58,9 +48,6 @@ Sub Combine(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint)
 		a = RealMod(a, nDeckSize)
 		b = RealMod(b, nDeckSize)
 	Next nThisOperation
-	
-'	a = RealMod(a, nDeckSize)
-'	b = RealMod(b, nDeckSize)
 End Sub
 
 'Find the logarithm of any base - copied STRAIGHT from the Freebasic documentation
@@ -81,31 +68,16 @@ Sub Repeat(Byref a As Longint, Byref b As Longint, nDeckSize As Const Longint, n
 	Dim As Bigint a2, b2
 	Dim n2 As Longint = nRepetitions
 	Dim nLogn As Longint
-
-/'
-    while n2 > 0:
-        a2, b2 = a, b
-        logn = math.floor(math.log(n2, 2))
-        for _ in range(logn):
-            a2, b2 = (a2**2) % m, (b2 * (a2 + 1)) % m
-        a1, b1 = (a1 * a2) % m, (a1 * b2 + b1) % m
-        n2 -= 2**logn
-    assert n2 == 0
-    return a1, b1
-'/
 	
 	Do While n2 > 0
 		a2 = a : b2 = b
 		nLogn = Int(LogBaseX(n2, 2))
 		For nThisIter As Integer = 1 To nLogn
-			Print "b2 * (a2 + 1): " ; b2 * (a2 + 1)
 			b2 = RealMod(b2 * (a2 + 1), nDeckSize)
 			a2 = RealMod(a2^2, nDeckSize)
-			Print "a2, b2 " ; a2 ; b2
 		Next nThisIter
 		b1 = RealMod(a1 * b2 + b1, nDeckSize)
 		a1 = RealMod(a1 * a2, nDeckSize)
-		Print "a1, b1 " ; a1 ; b1
 		n2 -= 2 ^ nLogn
 	Loop
 	If n2 = 0 Then Print , "n2 is zero!" Else Print , "n2 is NOT zero!"
@@ -188,11 +160,16 @@ Print
 
 'REAL
 nDeckSize = 119315717514047 : nCardPosition = 2020 : nShuffles = 101741582076661
+Dim nBigSolution As Bigint
+
 Combine(a, b, nDeckSize)
 Print "After combine: " & a ; b
 Repeat(a, b, nDeckSize, nShuffles)
 Print "After repeat: " & a ; b
 i = Inverse(a, nDeckSize)
 Print "Inverse: " & i
-Print "And the solution is... " & RealMod((nCardPosition - b) * i, nDeckSize)
+Print "(nCardPosition - b): " & (nCardPosition - b)
+nBigSolution = CBig((nCardPosition - b)) * CBig(i)
+Print "(nCardPosition - b) * i: " & nBigSolution
+Print : Print "And the solution is..." ; : Color 15 : Print RealMod(nBigSolution, nDeckSize) : Color 7
 Print
