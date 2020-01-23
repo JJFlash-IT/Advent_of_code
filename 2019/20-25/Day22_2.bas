@@ -11,7 +11,7 @@ Type strOperations
 End Type
 
 Dim Shared aOperations(Any) As strOperations
-Dim Shared nOperationNumber As Integer
+Dim Shared nOperationNumber As Integer = -1
 
 Function RealMod(nNumber1 As Bigint, nNumber2 As Longint) As Longint
 	'As explained in: https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
